@@ -21,7 +21,7 @@ pipeline {
                     settings.split('\n').each { line, count ->
                         def fields = line.split(',')
                             node {
-                                //echo fields[0] + ': ' + fields[1] ;
+                                echo fields[0] + ': ' + fields[1] ;
                                 _myArrayName[index] = fields[0] + ': ' + fields[1] ;    //store data in array
                             }
                         index = index + 1 ;
