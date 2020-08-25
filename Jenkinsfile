@@ -1,14 +1,8 @@
-
+def _myArrayName = [] 
+def index = 0
 def environmentSplitter() {
-    //def envName = "${env.FILENAME}".split(" : ")
     def envName = readFile("${environmentName}")
-    //if (branchName == "master") {
-        //echo envName
-        return envName.split(":")[1]
-    //}
-    //else {
-    //   return 'test'
-    //}
+        return envName
 }
 
 pipeline {
@@ -20,13 +14,23 @@ pipeline {
     agent any
 
     stages{
-        stage ('Example') {
+        stage ('Reading CSV') {
             steps {
-                echo "Hello JENKINS"
-                echo "Opening: ${env.FILENAME} "
-                
-                
-                //echo  "${env.SECONDS}.split(":")"
+                script {
+                    def settings = "${env.FILENAME}"
+                    settings.split('\n').each { line, count ->
+                        def fields = line.split(',')
+                            node {
+                                //echo fields[0] + ': ' + fields[1] ;
+                                _myArrayName[index] = fields[0] + ': ' + fields[1] ;    //store data in array
+                            }
+                        index = index + 1 ;
+                    }
+
+                    //Creating .txt file
+                    
+
+                }
             }    
         }      
     }
