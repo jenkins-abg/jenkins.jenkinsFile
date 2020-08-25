@@ -6,7 +6,7 @@ setlocal
 :PROMPT
 SET /P AREYOUSURE=Do you want to pushGit Repo (Y/[N])?
 IF /I "%AREYOUSURE%" NEQ "Y" GOTO END
-
+	CLS
 	ECHO Please wait... Internet connection.
 	:: Checking Internet connection.
 	ECHO ============================
