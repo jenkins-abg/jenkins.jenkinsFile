@@ -36,7 +36,11 @@ pipeline {
         FILELOG = fileExists (relPath + '/Log.txt')
     }
 
-    agent any
+    agent {
+        node {
+            label "${slaveName}"
+        }
+    }
 
     stages{       
         stage ('Reading CSV') {
@@ -60,6 +64,7 @@ pipeline {
                         echo "no file exists..."
                         echo "creating file..."
                     }
+
                     writeFile file: (relPath + '/Log.txt'), text: ("""${_myArrayName[4]}\n${_myArrayName[0]}\nError_Number:\t0\nStatus:\t Starting\nSpider Version:\t\nSpider Log Text:\t\nError##_Fix:\t""")
                 }
             }
