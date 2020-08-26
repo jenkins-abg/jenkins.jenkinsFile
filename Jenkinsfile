@@ -50,7 +50,7 @@ pipeline {
                                 //store data in array
                                 _myArrayName[index] = fields[0] + ': ' + fields[1] ;    
                             }
-                        index = index + 1 ;
+                        index++;
                     }
                         
                     if("${env.FILELOG}" == 'true'){
@@ -63,6 +63,76 @@ pipeline {
                     writeFile file: (relPath + '/Log.txt'), text: ("""${_myArrayName[4]}\n${_myArrayName[0]}\nError_Number:\t0\nStatus:\t Starting\nSpider Version:\t\nSpider Log Text:\t\nError##_Fix:\t""")
                 }
             }
+        }
+        stage('Initializing...'){
+            steps {
+                build job: '_jenkins_Main', quietPeriod: 1
+                //build job: '_jenkins_Build', quietPeriod: 1
+            }
+        }
+        stage('Setting Startup..'){
+            steps {
+                build job: '_jenkins_StartUpAddress', quietPeriod: 1
+                //build job: '_jenkins_Build', quietPeriod: 1
+            }
+        }
+        stage('Detecting PL..'){
+            steps {
+                build job: '_jenkins_PLError', quietPeriod: 1
+            }
+        }
+        stage('Setting Comment Result..'){
+            steps {
+                build job: '_jenkins_CommentResultError', quietPeriod: 1
+            }
+        }
+        // Checking and Applying Pre-run countermeasure
+        stage('Pre-run countermeasure...'){
+            parallel{
+                stage('jenkins_CPUEmergencyError'){
+                    steps {
+                        build job: '_jenkins_CPUEmergencyError', quietPeriod: 1
+                    }
+                }
+                stage('jenkins_AssemblerError'){
+                    steps {
+                        build job: '_jenkins_AssemblerError', quietPeriod: 1
+                    }
+                }
+                stage('jenkins_PragmaError'){
+                    steps {
+                        build job: '_jenkins_PragmaError', quietPeriod: 1
+                    }
+                }
+            }
+        }
+        // Building software
+        stage('Run...'){
+            steps {
+                build job: '_jenkins_Main', quietPeriod: 1
+                //build job: '_jenkins_Build', quietPeriod: 1
+            }
+        }
+        stage('applying jnknsByteError countermeasure...'){
+            steps {
+                build job: '_jenkins_ByteError', quietPeriod: 100
+            }
+        }
+        stage('applying jnknsAmbiguousError countermeasure...'){
+            steps {
+                build job: '_jenkins_AmbiguousError', quietPeriod: 1
+            }
+        }
+    }
+    post {
+        always {
+            echo "Build results: ${buildResults.toString()}"
+        }
+        success {
+            echo "All builds completed OK"
+        }
+        failure {
+            echo "A job failed"
         }
     }
 }
