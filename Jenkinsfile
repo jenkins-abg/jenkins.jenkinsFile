@@ -10,6 +10,7 @@
 /*    Modifying this code may result to tool malfunctioning.    */
 /*                                                              */
 /****************************************************************/
+library 'jenkinsci-unstashParam-library' 
 
 def _myArrayName = [] 
 def index = 0
@@ -22,6 +23,11 @@ if("${environmentName}" == ""){
     return
 }else{
     echo "executing pipeline..."
+}
+
+node { 
+    def file_in_workspace = unstashParam "environmentName" 
+    echo "copying to workspace... ${file_in_workspace}" 
 }
 
 def environmentSplitter() {
