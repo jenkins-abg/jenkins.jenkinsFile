@@ -50,20 +50,12 @@ pipeline {
             label "${slaveName}"
         }
     }
-    stages{  
-        stage("${slaveName}") {
-            agent {
-                label "${slaveName}"
-            }
             stages{
                 stage ('Reading CSV') {
                     agent {
-                        node {
-                            label "${slaveName}"
-                        }
+                        label "${slaveName}"
                     }
                     steps {
-                        node("${slaveName}"){
                             script {
                                 def settings = "${env.FILENAME}"
                                 settings.split('\n').each { line, count ->
@@ -83,16 +75,10 @@ pipeline {
                                     echo "creating file..."
                                 }
                                 writeFile file: (relPath + '/Log.txt'), text: ("""${_myArrayName[4]}\n${_myArrayName[0]}\nError_Number:\t0\nStatus:\t Starting\nSpider Version:\t\nSpider Log Text:\t\nError##_Fix:\t""")
-                            }
                         }
                     }
                 }
-                stage('Clear Folder...'){
-                    agent {
-                            node {
-                                label "${slaveName}"
-                            }
-                        }         
+                stage('Clear Folder...'){    
                         steps {
                         build job: '_jenkins_ClearDataInit', quietPeriod: 1
                         //build job: '_jenkins_Build', quietPeriod: 1
@@ -117,7 +103,5 @@ pipeline {
                         }
                 }     
             }
-        }
-    }
 }
 
