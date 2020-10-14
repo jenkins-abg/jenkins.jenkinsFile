@@ -50,31 +50,34 @@ pipeline {
             label "${slaveName}"
         }
     }
+
+    stages{
+        stage("slave PC Run") {
+            agent {
+                label "${slaveName}"
+            }
             stages{
                 stage ('Reading CSV') {
-                    agent {
-                        label "${slaveName}"
-                    }
                     steps {
-                            script {
-                                def settings = "${env.FILENAME}"
-                                settings.split('\n').each { line, count ->
-                                    def fields = line.split(',')
-                                        node {
-                                            echo fields[0] + ': ' + fields[1] ;
-                                            //store data in array
-                                            _myArrayName[index] = fields[0] + ': ' + fields[1] ;    
-                                        }
-                                    index++;
-                                }
-                                if("${env.FILELOG}" == 'true'){
-                                    echo "file exists"
-                                }else{
-                                    targetFile = new File(relPath + '/Log.txt');
-                                    echo "no file exists..."
-                                    echo "creating file..."
-                                }
-                                writeFile file: (relPath + '/Log.txt'), text: ("""${_myArrayName[4]}\n${_myArrayName[0]}\nError_Number:\t0\nStatus:\t Starting\nSpider Version:\t\nSpider Log Text:\t\nError##_Fix:\t""")
+                        script {
+                            def settings = "${env.FILENAME}"
+                            settings.split('\n').each { line, count ->
+                                def fields = line.split(',')
+                                    node {
+                                        echo fields[0] + ': ' + fields[1] ;
+                                        //store data in array
+                                        _myArrayName[index] = fields[0] + ': ' + fields[1] ;    
+                                    }
+                                index++;
+                            }
+                            if("${env.FILELOG}" == 'true'){
+                                echo "file exists"
+                            }else{
+                                targetFile = new File(relPath + '/Log.txt');
+                                echo "no file exists..."
+                                echo "creating file..."
+                            }
+                            writeFile file: (relPath + '/Log.txt'), text: ("""${_myArrayName[4]}\n${_myArrayName[0]}\nError_Number:\t0\nStatus:\t Starting\nSpider Version:\t\nSpider Log Text:\t\nError##_Fix:\t""")
                         }
                     }
                 }
@@ -103,5 +106,7 @@ pipeline {
                         }
                 }     
             }
+        }
+    }            
 }
 
