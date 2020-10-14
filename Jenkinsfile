@@ -51,13 +51,12 @@ pipeline {
         }
     }
 
-    stages{
-        stage("slave PC Run") {
-            agent {
-                label "${slaveName}"
-            }
+
             stages{
                 stage ('Reading CSV') {
+                    agent {
+                        label "${slaveName}"
+                    }
                     steps {
                         script {
                             def settings = "${env.FILENAME}"
@@ -81,13 +80,19 @@ pipeline {
                         }
                     }
                 }
-                stage('Clear Folder...'){    
+                stage('Clear Folder...'){   
+                    agent {
+                        label "${slaveName}"
+                    } 
                         steps {
                         build job: '_jenkins_ClearDataInit', quietPeriod: 1
                         //build job: '_jenkins_Build', quietPeriod: 1
                     }
                 }
-                stage('Creating remote environment...'){ 
+                stage('Creating remote environment...'){
+                                        agent {
+                        label "${slaveName}"
+                    }
                     steps {
                         build job: '_jenkins_CopyRemoteToLocal', parameters:([
                                 [$class: 'StringParameterValue', name: 'mySlave', value: "${slaveName}"],
@@ -100,13 +105,14 @@ pipeline {
                         }
                 }
                 stage('Initializing...'){
+                                        agent {
+                        label "${slaveName}"
+                    }
                     steps {
                             build job: '_jenkins_Main', quietPeriod: 1
                             //build job: '_jenkins_Build', quietPeriod: 1
                         }
                 }     
-            }
-        }
-    }            
+            }         
 }
 
