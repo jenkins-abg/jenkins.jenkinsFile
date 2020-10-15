@@ -16,7 +16,6 @@ def _myArrayName = []
 def index = 0
 def relPath = 'C:/work/Jenkins/automation-jenkins'
 
-
 node { 
     def file_in_workspace = unstashParam "environmentName" 
     def mySlave =  "${slaveName}"
@@ -44,6 +43,7 @@ pipeline {
     environment {
         FILENAME = environmentSplitter()
         FILELOG = fileExists (relPath + '/Log.txt')
+        NODE_NAME = "${slaveName}"
     }
 
     agent {
@@ -51,8 +51,8 @@ pipeline {
             label "${slaveName}"
         }
     }
-
-    stages{       
+    
+    stages{
         stage ('Reading CSV') {
             agent {
                 node {
@@ -63,12 +63,12 @@ pipeline {
                 script {
                     def settings = "${env.FILENAME}"
                     settings.split('\n').each { line, count ->
-                        def fields = line.split(',')
-                            node {
-                                //echo fields[0] + ': ' + fields[1] ;
-                                //store data in array
-                                _myArrayName[index] = fields[0] + ': ' + fields[1] ;    
-                            }
+                    def fields = line.split(',')
+                        node {
+                            echo fields[0] + ': ' + fields[1] ;
+                            //store data in array
+                            _myArrayName[index] = fields[0] + ': ' + fields[1] ;    
+                        }
                         index++;
                     }
                     if("${env.FILELOG}" == 'true'){
@@ -80,6 +80,19 @@ pipeline {
                     }
                     writeFile file: (relPath + '/Log.txt'), text: ("""${_myArrayName[4]}\n${_myArrayName[0]}\nError_Number:\t0\nStatus:\t Starting\nSpider Version:\t\nSpider Log Text:\t\nError##_Fix:\t""")
                 }
+            }
+        }
+        stage('Clear Folder...'){   
+            agent {
+                node {
+                    label "${slaveName}"
+                }
+            }
+            steps {
+                build job: '_jenkins_ClearDataInit', parameters:([
+                        [$class: 'LabelParameterValue', name: 'node', label: "${slaveName}"]
+                        ])
+                //build job: '_jenkins_Build', quietPeriod: 1
             }
         }
         stage('Creating remote environment...'){
@@ -95,19 +108,9 @@ pipeline {
                         [$class: 'StringParameterValue', name: 'myTestSheet', value: "${_myArrayName[3]}"],
                         [$class: 'StringParameterValue', name: 'myTestSheetParentFolder', value: "${_myArrayName[1]}"],
                         [$class: 'StringParameterValue', name: 'mySoftwareOneFolderUp', value: "${_myArrayName[5]}"],
-                        [$class: 'StringParameterValue', name: 'mySoftwareParentFolder', value: "${_myArrayName[6]}"]
+                        [$class: 'StringParameterValue', name: 'mySoftwareParentFolder', value: "${_myArrayName[6]}"],
+                        [$class: 'LabelParameterValue', name: 'node', label: "${slaveName}"]
                         ])
-            }
-        }
-        stage('Clear Folder...'){
-            agent {
-                node {
-                    label "${slaveName}"
-                }
-            }
-            steps {
-                build job: '_jenkins_ClearDataInit', quietPeriod: 10
-                //build job: '_jenkins_Build', quietPeriod: 1
             }
         }
         stage('Initializing...'){
@@ -117,142 +120,12 @@ pipeline {
                 }
             }
             steps {
-                build job: '_jenkins_Main', quietPeriod: 10
-                //build job: '_jenkins_Build', quietPeriod: 1
-            }
-        }
-        stage('Setting Startup..'){
-            agent {
-                node {
-                    label "${slaveName}"
-                }
-            }
-            steps {
-                build job: '_jenkins_StartUpAddress', quietPeriod: 10
-                //build job: '_jenkins_Build', quietPeriod: 1
-            }
-        }
-        stage('Detecting PL..'){
-            agent {
-                node {
-                    label "${slaveName}"
-                }
-            }
-            steps {
-                build job: '_jenkins_PLError', quietPeriod: 10
-            }
-        }
-        stage('Setting Comment Result..'){
-            agent {
-                node {
-                    label "${slaveName}"
-                }
-            }
-            steps {
-                build job: '_jenkins_CommentResultError', quietPeriod: 5
-            }
-        }
-        // Checking and Applying Pre-run countermeasure
-        stage('Pre-run countermeasure...'){
-            parallel{
-                stage('jenkins_CPUEmergencyError'){
-                    agent {
-                        node {
-                            label "${slaveName}"
-                        }
-                    }
-                    steps {
-                        build job: '_jenkins_CPUEmergencyError', quietPeriod: 5
-                    }
-                }
-                stage('jenkins_AssemblerError'){
-                    agent {
-                        node {
-                            label "${slaveName}"
-                        }
-                    }
-                    steps {
-                        build job: '_jenkins_AssemblerError', quietPeriod: 5
-                    }
-                }
-                stage('jenkins_PragmaError'){
-                    agent {
-                        node {
-                            label "${slaveName}"
-                        }
-                    }
-                    steps {
-                        build job: '_jenkins_PragmaError', quietPeriod: 5
-                    }
-                }
-            }
-        }
-        // Building software
-        stage('Run...'){
-            agent {
-                node {
-                    label "${slaveName}"
-                }
-            }
-            steps {
-                build job: '_jenkins_Main', quietPeriod: 10
-                //build job: '_jenkins_Build', quietPeriod: 1
-            }
-        }
-        stage('applying jnknsByteError countermeasure...'){
-            agent {
-                node {
-                    label "${slaveName}"
-                }
-            }
-            steps {
-                build job: '_jenkins_ByteError', quietPeriod: 100
-            }
-        }
-        stage('applying jnknsAmbiguousError countermeasure...'){
-            agent {
-                node {
-                    label "${slaveName}"
-                }
-            }
-            steps {
-                build job: '_jenkins_AmbiguousError', quietPeriod: 5
-            }
-        }
-        stage('Copying Log to my source...'){
-            agent {
-                node {
-                    label "${slaveName}"
-                }
-            }
-            steps {
-                build job: '_jenkins_CopyLog', parameters:([
-                        [$class: 'StringParameterValue', name: 'mySlave', value: "${slaveName}"],
-                        [$class: 'StringParameterValue', name: 'myLocalIP', value: "${_myArrayName[9]}"],
-                        [$class: 'StringParameterValue', name: 'myTestSheet', value: "${_myArrayName[3]}"],
-                        [$class: 'StringParameterValue', name: 'myTestSheetParentFolder', value: "${_myArrayName[1]}"],
-                        [$class: 'StringParameterValue', name: 'mySoftwareOneFolderUp', value: "${_myArrayName[5]}"],
-                        [$class: 'StringParameterValue', name: 'mySoftwareParentFolder', value: "${_myArrayName[6]}"]
+                    build job: '_jenkins_Main', parameters:([
+                        [$class: 'LabelParameterValue', name: 'node', label: "${slaveName}"]
                         ])
+                    //build job: '_jenkins_Build', quietPeriod: 1
             }
-        }
-        stage('Copying remote environment to local...'){
-            agent {
-                node {
-                    label "${slaveName}"
-                }
-            }
-            steps {
-                build job: '_jenkins_CopyRemoteToLocal', parameters:([
-                        [$class: 'StringParameterValue', name: 'mySlave', value: "${slaveName}"],
-                        [$class: 'StringParameterValue', name: 'myLocalIP', value: "${_myArrayName[9]}"],
-                        [$class: 'StringParameterValue', name: 'myTestSheet', value: "${_myArrayName[3]}"],
-                        [$class: 'StringParameterValue', name: 'myTestSheetParentFolder', value: "${_myArrayName[1]}"],
-                        [$class: 'StringParameterValue', name: 'mySoftwareOneFolderUp', value: "${_myArrayName[5]}"],
-                        [$class: 'StringParameterValue', name: 'mySoftwareParentFolder', value: "${_myArrayName[6]}"]
-                        ])
-            }
-        }
-    }
+        }     
+    }         
 }
 
