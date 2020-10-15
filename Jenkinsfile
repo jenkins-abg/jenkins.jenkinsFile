@@ -154,23 +154,33 @@ pipeline {
         }
         // Checking and Applying Pre-run countermeasure
         stage('Pre-run countermeasure...'){
-            agent {
-                node {
-                    label "${slaveName}"
-                }
-            }
             parallel{
                 stage('jenkins_CPUEmergencyError'){
+                    agent {
+                        node {
+                            label "${slaveName}"
+                        }
+                    }
                     steps {
                         build job: '_jenkins_CPUEmergencyError', quietPeriod: 5
                     }
                 }
                 stage('jenkins_AssemblerError'){
+                    agent {
+                        node {
+                            label "${slaveName}"
+                        }
+                    }
                     steps {
                         build job: '_jenkins_AssemblerError', quietPeriod: 5
                     }
                 }
                 stage('jenkins_PragmaError'){
+                    agent {
+                        node {
+                            label "${slaveName}"
+                        }
+                    }
                     steps {
                         build job: '_jenkins_PragmaError', quietPeriod: 5
                     }
