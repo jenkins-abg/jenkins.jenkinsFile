@@ -16,16 +16,15 @@ def _myArrayName = []
 def index = 0
 def relPath = 'C:/work/Jenkins/automation-jenkins'
 
-/*
-node { 
-    label "${slaveName}"
+
+node("${slaveName}") { 
     def file_in_workspace = unstashParam "environmentName" 
     def mySlave =  "${slaveName}"
     def myParentFolder =  ""
     def myLocalIP = ""
     echo "copying to workspace... ${file_in_workspace}" 
 }
-*/
+
 
 //Checking for settings if user selected a file
 
@@ -53,7 +52,7 @@ pipeline {
     agent {
         node {
             label "${slaveName}"
-            unstashParam "environmentName" 
+            //unstashParam "environmentName" 
         }
     }
     /*stages {
