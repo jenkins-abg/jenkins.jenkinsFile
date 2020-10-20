@@ -17,6 +17,7 @@ def index = 0
 def relPath = 'C:/work/Jenkins/automation-jenkins'
 
 node { 
+    label "${slaveName}"
     def file_in_workspace = unstashParam "environmentName" 
     def mySlave =  "${slaveName}"
     def myParentFolder =  ""
