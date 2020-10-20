@@ -16,16 +16,17 @@ def _myArrayName = []
 def index = 0
 def relPath = 'C:/work/Jenkins/automation-jenkins'
 
-node { 
+/*node { 
     label "${slaveName}"
     def file_in_workspace = unstashParam "environmentName" 
     def mySlave =  "${slaveName}"
     def myParentFolder =  ""
     def myLocalIP = ""
     echo "copying to workspace... ${file_in_workspace}" 
-}
+}*/
 
 //Checking for settings if user selected a file
+/*
 if("${environmentName}" == ""){
     echo "No environment selected..."
     currentBuild.result = 'SUCCESS'
@@ -38,12 +39,12 @@ def environmentSplitter() {
     def envName = readFile("${environmentName}")
     return envName        
 }
-
+*/
 pipeline {
     
     environment {
-        FILENAME = environmentSplitter()
-        FILELOG = fileExists (relPath + '/Log.txt')
+        //FILENAME = environmentSplitter()
+        //FILELOG = fileExists (relPath + '/Log.txt')
         NODE_NAME = "${slaveName}"
     }
 
