@@ -56,7 +56,7 @@ pipeline {
     stages {
         stage ("print slave") {
             steps {
-                echo "${slaveNum}"
+                echo "${slaveName}"
             }
         }
     }
