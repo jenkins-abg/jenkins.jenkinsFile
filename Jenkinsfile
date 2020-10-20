@@ -51,7 +51,14 @@ pipeline {
             label "${slaveName}"
         }
     }
-    
+    stages {
+        stage ("print slave") {
+            steps {
+                echo "${slaveNum}"
+            }
+        }
+    }
+    /*
     stages{
         stage ('Reading CSV') {
             agent {
@@ -129,6 +136,7 @@ pipeline {
                     //build job: '_jenkins_Build', quietPeriod: 1
             }
         }     
-    }         
+    }     
+    */    
 }
 
