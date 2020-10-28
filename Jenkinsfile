@@ -263,6 +263,9 @@ pipeline {
                     label "${slaveName}"
                 }
             }
+            options {
+                timeout(time: 2, unit: "MINUTES")
+            }
             steps {
                 build job: '_jenkins_CopyLog', parameters:([
                         [$class: 'LabelParameterValue', name: 'mySlave', label: "${slaveName}"],
