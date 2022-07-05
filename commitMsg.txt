@@ -51,3 +51,5 @@ $excelApp = New-Object -comobject Excel.Application
 $excelApp.Visible = $True
 $aWorkbook = $excelApp.Workbooks.open("C:\Users\UserName\Desktop\Book3.xlsm")
 Write-Output $aWorkbook.Worksheets.item("Sheet1").Shapes.item("cbxTest2").Oleformat.Object.value
+Add-Type -AssemblyName PresentationCore,PresentationFramework
+
