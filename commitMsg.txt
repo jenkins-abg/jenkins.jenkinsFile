@@ -3,3 +3,45 @@ Updated File
 set CUR_DATE=%DTS:~0,4%-%DTS:~4,2%-%DTS:~6,2%
 
 explorerViewletVisible && filesExplorerFocus && !explorerResourceIsRoot && !explorerResourceReadonly && !inputFocus
+
+Option Explicit
+ 
+#If Win64 Then
+    Private Declare PtrSafe Function GetParent _
+        Lib "user32.dll" (ByVal hwnd As LongPtr) As LongPtr
+#Else
+    Private Declare Function GetParent _
+        Lib "user32.dll" (ByVal hwnd As Long) As Long
+#End If
+ 
+#If Win64 Then
+    Public Function GetUserformHwnd( _
+        ByRef ufmTarget As MSForms.UserForm) As LongPtr
+     
+    Dim lngHwndControl As LongPtr
+         
+#Else
+    Public Function GetUserformHwnd( _
+        ByRef ufmTarget As MSForms.UserForm) As Long
+     
+    Dim lngHwndControl As Long
+     
+#End If
+ 
+    Dim objControl As MSForms.Control
+    Dim strRandomName As String
+     
+    Randomize
+    strRandomName = CStr(Rnd)
+     
+    Set objControl = ufmTarget.Controls.Add( _
+        "Forms.Frame.1", strRandomName, False)
+     
+    objControl.Left = ufmTarget.ScrollLeft + ufmTarget.InsideWidth
+    objControl.Visible = True
+    lngHwndControl = objControl.[_GethWnd]
+     
+    GetUserformHwnd = GetParent(GetParent(lngHwndControl))
+    ufmTarget.Controls.Remove strRandomName
+     
+End Function
