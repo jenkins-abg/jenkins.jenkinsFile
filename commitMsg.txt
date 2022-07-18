@@ -53,3 +53,14 @@ $aWorkbook = $excelApp.Workbooks.open("C:\Users\UserName\Desktop\Book3.xlsm")
 Write-Output $aWorkbook.Worksheets.item("Sheet1").Shapes.item("cbxTest2").Oleformat.Object.value
 Add-Type -AssemblyName PresentationCore,PresentationFramework
 
+Set "Pattern=abcd"
+
+For /R "C:\" %%# in (*.xml) Do (
+    Echo %%~nx# | FIND "%Pattern%" 1>NUL && (
+        Echo Full Path: %%~#
+        REM Echo FileName : %%~nx#
+        REM Echo Directory: %%~p#
+    )
+)
+
+
